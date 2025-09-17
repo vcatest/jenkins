@@ -5,56 +5,39 @@ on:
     branches:
       - master
   pull_request:
-    types: [opened, synchronize, reopened]
 
 jobs:
   sonarcloud:
-    name: Build and analyze with SonarCloud
+    name: Build and analyze
     runs-on: ubuntu-latest
     steps:
       # Checkout source code
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history required for SonarCloud analysis
+          fetch-depth: 0
 
-      # Set up Node.js (Prettier/frontend-maven-plugin needs >=16, recommend 18+)
+      # Set up Node.js 18 (needed for frontend-maven-plugin)
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: yarn
 
-      # Enable Corepack and activate Yarn 4.9.4
-      - name: Enable Corepack for Yarn 4
+      # Enable Corepack for Yarn 4.9.4 (matches your package.json)
+      - name: Enable Corepack and Yarn 4
         run: |
           corepack enable
           corepack prepare yarn@4.9.4 --activate
 
-      # Set up JDK 17 (required for Jenkins build)
+      # Set up JDK 17 (required for Maven/Jenkins build)
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: 'zulu'
 
-      # Cache SonarQube packages
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
-      # Cache Maven repository
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
-      # Run Maven build with SonarCloud analysis
-      - name: Build and analyze
+      # Run Maven build + SonarCloud scan
+      - name: Build and analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
