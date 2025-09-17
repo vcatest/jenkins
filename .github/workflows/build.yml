@@ -1,4 +1,4 @@
-name: SonarCloud Scan
+name: SonarQube
 
 on:
   push:
@@ -8,21 +8,36 @@ on:
 
 jobs:
   sonarcloud:
-    name: Analyze with SonarCloud
+    name: SonarCloud Analysis
     runs-on: ubuntu-latest
     steps:
+      # Checkout source code
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Set up Node.js 18 + Corepack + Yarn 4
-      - name: Set up Node.js & Corepack
+      # Set up Node.js 18
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: |
+
+      # Enable Corepack and Yarn 4.9.4
+      - name: Enable Corepack and Yarn
+        run: |
           corepack enable
           corepack prepare yarn@4.9.4 --activate
+          yarn --version
+
+      # Install JS dependencies (for Prettier/Spotless)
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # Optional: Auto-fix Prettier formatting
+      - name: Auto-fix Prettier
+        run: |
+          set +e
+          yarn exec prettier --write .
 
       # Set up JDK 17
       - name: Set up JDK 17
@@ -31,12 +46,15 @@ jobs:
           java-version: 17
           distribution: 'zulu'
 
-      # Run SonarCloud scan only (skip build & Spotless)
+      # Minimal Java compile (skip tests & Spotless)
+      - name: Compile Java (minimal)
+        run: mvn clean compile -DskipTests=true -Dspotless.check.skip=true
+
+      # Run SonarCloud analysis
       - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          mvn clean org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=vcatest_jenkins \
-            -Dspotless.check.skip=true \
-            -DskipTests=true
+        run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+              -Dsonar.projectKey=vcatest_jenkins \
+              -DskipTests=true \
+              -Dspotless.check.skip=true
