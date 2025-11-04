@@ -139,6 +139,48 @@ THE SOFTWARE.
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-maven-plugin</artifactId>
+          <version>4.8.5.0</version>
+          <configuration>
+            <maxHeap>768</maxHeap>
+            <!-- Enable XML report output -->
+            <xmlOutput>true</xmlOutput>
+            <failOnError>false</failOnError>
+            <!-- Optional: You can disable the default HTML report if you don't need it -->
+            <htmlOutput>false</htmlOutput>
+            <!-- Optional: Set effort to Max for a more thorough analysis -->
+            <effort>Max</effort>
+            <!-- Optional: Set a threshold for bug severity to be included in the report -->
+            <threshold>Low</threshold>
+            <failThreshold>High</failThreshold>
+            <!-- =================================================== -->
+            <!-- == ADD THIS SECTION to enable FindSecBugs        == -->
+            <!-- =================================================== -->
+            <plugins>
+              <plugin>
+                <groupId>com.h3xstream.findsecbugs</groupId>
+                <artifactId>findsecbugs-plugin</artifactId>
+                <version>1.14.0</version> <!-- Compatible version with SpotBugs 4.8.x -->
+              </plugin>
+            </plugins>
+            <!-- Exclude problematic detectors that are not compatible -->
+            <omitVisitors>SharedVariableAtomicityDetector</omitVisitors>
+          </configuration>
+          <executions>
+            <execution>
+              <id>spotbugs-report</id>
+              <!-- Bind the report generation to the 'verify' phase -->
+              <phase>verify</phase>
+              <goals>
+                <!-- Use the 'check' goal, which generates a report and does NOT fail the build when failOnError=false -->
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <!-- Version specified in parent POM -->
