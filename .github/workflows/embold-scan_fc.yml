@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
@@ -23,23 +24,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Remove non-breaking spaces from XML files
-        run: |
-          find . -name "*.xml" -print0 | while IFS= read -r -d '' file; do
-            sed -i 's/\xC2\xA0/ /g' "$file"
-          done
-
-      - name: Build with Maven and Run Analysis
+      - name: Build with Maven
         run: mvn -B clean verify -DskipTests
 
       - name: Download and Extract Scanner
         run: |
-          curl ${{ vars.EMBOLD_SCANNER_URL }} -o browserstack-codequality-scanner-archive.tar.gz
-          tar xvf browserstack-codequality-scanner-archive.tar.gz
+          curl ${{ vars.EMBOLD_SCANNER_URL }} -o scanner.tar.gz
+          tar xvf scanner.tar.gz
 
       - name: Download Repository Configuration
         run: |
-          curl --silent --location --request GET "${{ vars.EMBOLD_URL_JAVA }}/api/v1/repositories/af3f6fe7fd89509802cafcbcbe7bb69b/scans/config/download" \
+          curl --silent --location \
+            "${{ vars.EMBOLD_URL_JAVA }}/api/v1/repositories/af3f6fe7fd89509802cafcbcbe7bb69b/scans/config/download" \
             --header "Authorization: Bearer ${{ secrets.EMBOLD_TOKEN_JAVA }}" \
             -o repository-configuration.json
 
