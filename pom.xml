@@ -3,117 +3,265 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.jenkins-ci</groupId>
-    <artifactId>jenkins</artifactId>
-    <version>1.140</version>
-    <relativePath/>
-  </parent>
+    <parent>
+        <groupId>org.jenkins-ci</groupId>
+        <artifactId>jenkins</artifactId>
+        <version>1.140</version>
+        <relativePath/>
+    </parent>
 
-  <groupId>org.jenkins-ci.main</groupId>
-  <artifactId>jenkins-parent</artifactId>
-  <version>${revision}${changelist}</version>
-  <packaging>pom</packaging>
+    <groupId>org.jenkins-ci.main</groupId>
+    <artifactId>jenkins-parent</artifactId>
+    <version>${revision}${changelist}</version>
+    <packaging>pom</packaging>
 
-  <name>Jenkins main module</name>
-  <description>The module that constitutes the main jenkins.war</description>
-  <url>https://github.com/jenkinsci/jenkins</url>
-
-  <licenses>
-    <license>
-      <name>The MIT license</name>
-      <url>https://opensource.org/licenses/MIT</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
-  <modules>
-    <module>bom</module>
-    <module>websocket/spi</module>
-    <module>websocket/jetty12-ee9</module>
-    <module>core</module>
-    <module>war</module>
-    <module>test</module>
-    <module>cli</module>
-    <module>coverage</module>
-  </modules>
-
-  <scm child.scm.connection.inherit.append.path="false"
-       child.scm.developerConnection.inherit.append.path="false"
-       child.scm.url.inherit.append.path="false">
-    <connection>scm:git:https://github.com/jenkinsci/jenkins.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/jenkins.git</developerConnection>
-    <tag>${scmTag}</tag>
+    <name>Jenkins main module</name>
+    <description>The module that constitutes the main jenkins.war</description>
     <url>https://github.com/jenkinsci/jenkins</url>
-  </scm>
 
-  <issueManagement>
-    <system>jira</system>
-    <url>https://issues.jenkins.io/issues/?jql=component=15593</url>
-  </issueManagement>
+    <licenses>
+        <license>
+            <name>The MIT license</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
-  <properties>
-    <revision>2.528</revision>
-    <changelist>-SNAPSHOT</changelist>
-    <project.build.outputTimestamp>2025-09-09T12:24:10Z</project.build.outputTimestamp>
-    <sonar.organization>vcatest</sonar.organization>
-    <project.patchManagement.system>github</project.patchManagement.system>
-    <patch.request.organisation>jenkinsci</patch.request.organisation>
-    <patch.request.repository>jenkins</patch.request.repository>
-    <project.patchManagement.url>https://api.github.com</project.patchManagement.url>
-    <patch.tracker.serverId>jenkins-jira</patch.tracker.serverId>
+    <modules>
+        <module>bom</module>
+        <module>websocket/spi</module>
+        <module>websocket/jetty12-ee9</module>
+        <module>core</module>
+        <module>war</module>
+        <module>test</module>
+        <module>cli</module>
+        <module>coverage</module>
+    </modules>
 
-    <changelog.url>https://www.jenkins.io/changelog</changelog.url>
+    <scm child.scm.connection.inherit.append.path="false"
+         child.scm.developerConnection.inherit.append.path="false"
+         child.scm.url.inherit.append.path="false">
+        <connection>scm:git:https://github.com/jenkinsci/jenkins.git</connection>
+        <developerConnection>scm:git:git@github.com:jenkinsci/jenkins.git</developerConnection>
+        <tag>${scmTag}</tag>
+        <url>https://github.com/jenkinsci/jenkins</url>
+    </scm>
 
-    <remoting.version>3327.v868139a_d00e0</remoting.version>
+    <issueManagement>
+        <system>jira</system>
+        <url>https://issues.jenkins.io/issues/?jql=component=15593</url>
+    </issueManagement>
 
-    <spotbugs.effort>Max</spotbugs.effort>
-    <spotbugs.threshold>Medium</spotbugs.threshold>
+    <properties>
+        <revision>2.528</revision>
+        <changelist>-SNAPSHOT</changelist>
+        <project.build.outputTimestamp>2025-09-09T12:24:10Z</project.build.outputTimestamp>
+        <sonar.organization>vcatest</sonar.organization>
+        <project.patchManagement.system>github</project.patchManagement.system>
+        <patch.request.organisation>jenkinsci</patch.request.organisation>
+        <patch.request.repository>jenkins</patch.request.repository>
+        <project.patchManagement.url>https://api.github.com</project.patchManagement.url>
+        <patch.tracker.serverId>jenkins-jira</patch.tracker.serverId>
 
-    <access-modifier.version>1.35</access-modifier.version>
-    <antlr.version>4.13.2</antlr.version>
-    <bridge-method-injector.version>1.32</bridge-method-injector.version>
-    <spotless.check.skip>true</spotless.check.skip>
-    <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
-    <winstone.version>8.13</winstone.version>
-    <node.version>24.7.0</node.version>
-  </properties>
+        <changelog.url>https://www.jenkins.io/changelog</changelog.url>
 
-  <repositories>
-    <repository>
-      <id>repo.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/public/</url>
-    </repository>
-  </repositories>
+        <remoting.version>3327.v868139a_d00e0</remoting.version>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>repo.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/public/</url>
-    </pluginRepository>
-  </pluginRepositories>
+        <spotbugs.effort>Max</spotbugs.effort>
+        <spotbugs.threshold>Medium</spotbugs.threshold>
 
-  <build>
-    <defaultGoal>install</defaultGoal>
-    <resources>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/resources</directory>
-      </resource>
-      <resource>
-        <filtering>true</filtering>
-        <directory>${basedir}/src/filter/resources</directory>
-      </resource>
-    </resources>
+        <access-modifier.version>1.35</access-modifier.version>
+        <antlr.version>4.13.2</antlr.version>
+        <bridge-method-injector.version>1.32</bridge-method-injector.version>
+        <spotless.check.skip>true</spotless.check.skip>
+        <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
+        <winstone.version>8.13</winstone.version>
+        <node.version>24.7.0</node.version>
+    </properties>
 
-    <pluginManagement>
-      <plugins>
-        <!-- All plugins preserved exactly -->
-        (… unchanged …)
-      </plugins>
-    </pluginManagement>
-  </build>
+    <repositories>
+        <repository>
+            <id>repo.jenkins-ci.org</id>
+            <url>https://repo.jenkins-ci.org/public/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repo.jenkins-ci.org</id>
+            <url>https://repo.jenkins-ci.org/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+
+        <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>${basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/filter/resources</directory>
+            </resource>
+        </resources>
+
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>4.8.5.0</version>
+                    <configuration>
+                        <maxHeap>768</maxHeap>
+                        <xmlOutput>true</xmlOutput>
+                        <failOnError>false</failOnError>
+                        <htmlOutput>false</htmlOutput>
+                        <effort>Max</effort>
+                        <threshold>Low</threshold>
+                        <failThreshold>High</failThreshold>
+                        <plugins>
+                            <plugin>
+                                <groupId>com.h3xstream.findsecbugs</groupId>
+                                <artifactId>findsecbugs-plugin</artifactId>
+                                <version>1.14.0</version>
+                            </plugin>
+                        </plugins>
+                        <omitVisitors>SharedVariableAtomicityDetector</omitVisitors>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>spotbugs-report</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <compilerReuseStrategy>alwaysNew</compilerReuseStrategy>
+                        <compilerArgs>
+                            <compilerArg>-Xpkginfo:always</compilerArg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <quiet>true</quiet>
+                        <splitindex>true</splitindex>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
+                            <forkedProcessTimeoutInSeconds>3600</forkedProcessTimeoutInSeconds>
+                            <java.awt.headless>true</java.awt.headless>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-jarsigner-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <configuration>
+                        <alias>${hudson.sign.alias}</alias>
+                        <storepass>${hudson.sign.storepass}</storepass>
+                        <keystore>${hudson.sign.keystore}</keystore>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.kohsuke</groupId>
+                    <artifactId>access-modifier-checker</artifactId>
+                    <version>${access-modifier.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>io.jenkins.tools.maven</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>process</goal>
+                            </goals>
+                            <phase>compile</phase>
+                            <configuration>
+                                <requireCompleteLicenseInfo>true</requireCompleteLicenseInfo>
+                                <script>../licenseCompleter.groovy</script>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jvnet.localizer</groupId>
+                    <artifactId>localizer-maven-plugin</artifactId>
+                    <configuration>
+                        <outputEncoding>UTF-8</outputEncoding>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jvnet.hudson.tools</groupId>
+                    <artifactId>maven-encoding-plugin</artifactId>
+                    <version>1.1</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>io.jenkins.tools</groupId>
+                    <artifactId>bridge-method-injector</artifactId>
+                    <version>${bridge-method-injector.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.antlr</groupId>
+                    <artifactId>antlr4-maven-plugin</artifactId>
+                    <version>${antlr.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <versionRange>[2.3,)</versionRange>
+                                        <goals>
+                                            <goal>list</goal>
+                                            <goal>unpack-dependencies</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>
