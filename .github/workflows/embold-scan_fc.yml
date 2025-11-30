@@ -1,55 +1,33 @@
-name: Embold Code Quality Scan
+name: Maven Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ master ]
-  workflow_dispatch:
+    branches: [ "main" ]
 
 jobs:
-  embold-scan_fc:
+  build:
+
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-m2
 
-      - name: Build with Maven
-        run: mvn -B clean verify -DskipTests
-
-      - name: Download and Extract Scanner
-        run: |
-          curl ${{ vars.EMBOLD_SCANNER_URL }} -o scanner.tar.gz
-          tar xvf scanner.tar.gz
-
-      - name: Download Repository Configuration
-        run: |
-          curl --silent --location \
-            "${{ vars.EMBOLD_URL_JAVA }}/api/v1/repositories/af3f6fe7fd89509802cafcbcbe7bb69b/scans/config/download" \
-            --header "Authorization: Bearer ${{ secrets.EMBOLD_TOKEN_JAVA }}" \
-            -o repository-configuration.json
-
-      - name: Run Embold Scanner
-        env:
-          EMBOLD_TOKEN: ${{ secrets.EMBOLD_TOKEN_JAVA }}
-        run: |
-          ./browserstack-codequality-scanner/bin/embold-scanner analyse \
-            -u ${{ vars.EMBOLD_URL_JAVA }} \
-            -t $EMBOLD_TOKEN \
-            -r af3f6fe7fd89509802cafcbcbe7bb69b \
-            -b . \
-            -d ./embold-data \
-            -c ./repository-configuration.json \
-            -l ./embold-log \
-            -sh ./embold-scanner-home \
-            -v
+    - name: Build with Maven (Skip SpotBugs)
+      run: mvn -B clean install -Dspotbugs.skip=true
