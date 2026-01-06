@@ -20,10 +20,15 @@ jobs:
         with:
           java-version: '21'
           distribution: 'zulu'
-          cache: 'maven'
+          # We temporary disable the cache to ensure a fresh, clean environment
+          # once it works, we can re-enable it.
+          # cache: 'maven'
 
-      - name: Clean Corrupted Cache
-        run: rm -rf ~/.m2/repository/io/jenkins/tools/incrementals
+      - name: Nuke Broken Cache
+        run: |
+          rm -rf ~/.m2/repository/io/jenkins
+          rm -rf ~/.m2/repository/org/jenkins-ci
+          rm -rf ~/.m2/repository/org/apache/maven/resolver
 
       - name: Build and analyze
         env:
@@ -35,7 +40,8 @@ jobs:
           verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
           -DskipTests
           -Dspotbugs.skip=true
-          -Dmaven.wagon.http.retryHandler.count=5
+          -Dmaven.wagon.http.retryHandler.count=10
+          -Dmaven.wagon.http.retryHandler.class=default
           -Dsonar.projectKey=vcatest_jenkins
           -Dsonar.organization=vcatest
           -Dsonar.host.url=https://sonarcloud.io
