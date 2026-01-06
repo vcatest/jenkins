@@ -21,13 +21,17 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
 
-      - name: Nuke Poisoned Metadata
+      - name: Pre-install Jenkins Extensions
         run: |
-          # Remove all cached 'not found' markers and the incrementals extension folder
-          if [ -d ~/.m2/repository ]; then
-            find ~/.m2/repository -name "*.lastUpdated" -delete
-          fi
-          rm -rf ~/.m2/repository/io/jenkins/tools/incrementals
+          # Manually download the extension that is causing the bootstrap failure
+          mvn -B -s jenkins-settings.xml dependency:get \
+            -Dartifact=io.jenkins.tools.incrementals:git-changelist-maven-extension:1.13:jar \
+            -DremoteRepositories=https://repo.jenkins-ci.org/incrementals/
+          
+          # Manually download the POM for that extension (the 'artifact descriptor')
+          mvn -B -s jenkins-settings.xml dependency:get \
+            -Dartifact=io.jenkins.tools.incrementals:git-changelist-maven-extension:1.13:pom \
+            -DremoteRepositories=https://repo.jenkins-ci.org/incrementals/
 
       - name: Build and analyze
         env:
@@ -35,7 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           mvn -B -U 
-          -gs jenkins-settings.xml 
+          -s jenkins-settings.xml 
           verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
           -DskipTests
           -Dspotbugs.skip=true
