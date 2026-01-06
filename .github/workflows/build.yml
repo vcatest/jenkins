@@ -20,6 +20,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'zulu'
+          cache: 'maven' # Built-in caching for Maven dependencies
 
       - name: Cache SonarQube packages
         uses: actions/cache@v4
@@ -28,24 +29,23 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+      # STEP 1: Pre-resolve dependencies to handle network 403/timeout issues
+      - name: Resolve Dependencies
+        run: >
+          mvn dependency:go-offline -B
+          -Dmaven.wagon.http.retryHandler.count=5
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
 
+      # STEP 2: Build and Analyze
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_VCATEST }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
-          -DskipTests 
-          -Dspotbugs.skip=true 
-          -Dsonar.projectKey=vcatest_jenkins 
-          -Dsonar.organization=vcatest 
-          -Dsonar.host.url=https://sonarcloud.io 
-          -Dsonar.c.file.suffixes=- 
-          -Dsonar.cpp.file.suffixes=- 
-          -Dsonar.objc.file.suffixes=-
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          -DskipTests
+          -Dspotbugs.skip=true
+          -Dmaven.wagon.http.retryHandler.count=5
+          -Dsonar.projectKey=vcatest_jenkins
+          -Dsonar.organization=vcatest
+          -Dsonar.host.url=https://sonarcloud.io
