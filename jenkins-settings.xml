@@ -2,17 +2,9 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
   
-  <mirrors>
-    <mirror>
-      <id>jenkins-mirror</id>
-      <mirrorOf>*</mirrorOf> 
-      <url>https://repo.jenkins-ci.org/public/</url>
-    </mirror>
-  </mirrors>
-
   <profiles>
     <profile>
-      <id>jenkins-repositories</id>
+      <id>jenkins-full</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -20,22 +12,22 @@
         <repository>
           <id>repo.jenkins-ci.org</id>
           <url>https://repo.jenkins-ci.org/public/</url>
-          <releases><enabled>true</enabled></releases>
-          <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+        <repository>
+          <id>incrementals</id>
+          <url>https://repo.jenkins-ci.org/incrementals/</url>
         </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
           <id>repo.jenkins-ci.org</id>
           <url>https://repo.jenkins-ci.org/public/</url>
-          <releases><enabled>true</enabled></releases>
-          <snapshots><enabled>true</enabled></snapshots>
+        </pluginRepository>
+        <pluginRepository>
+          <id>incrementals</id>
+          <url>https://repo.jenkins-ci.org/incrementals/</url>
         </pluginRepository>
       </pluginRepositories>
     </profile>
   </profiles>
-
-  <activeProfiles>
-    <activeProfile>jenkins-repositories</activeProfile>
-  </activeProfiles>
 </settings>
