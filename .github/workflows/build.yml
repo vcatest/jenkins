@@ -22,11 +22,13 @@ jobs:
           distribution: 'zulu'
           cache: 'maven'
 
-      # STEP 1: Download official Jenkins settings to resolve extension & plugin issues
+      # Download the official Jenkins settings file safely
       - name: Download Jenkins Settings
-        run: curl -sLo jenkins-settings.xml https://raw.githubusercontent.com/jenkins-infra/jenkins-maven-settings/main/settings.xml
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/jenkins-infra/jenkins-maven-settings/main/settings.xml -o jenkins-settings.xml
+          # Verify the file starts with <settings (to ensure it's not an error page)
+          head -n 5 jenkins-settings.xml
 
-      # STEP 2: Build and analyze using the downloaded settings
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_VCATEST }}
@@ -36,6 +38,7 @@ jobs:
           -DskipTests
           -Dspotbugs.skip=true
           -Dmaven.wagon.http.retryHandler.count=5
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
           -Dsonar.projectKey=vcatest_jenkins
           -Dsonar.organization=vcatest
           -Dsonar.host.url=https://sonarcloud.io
