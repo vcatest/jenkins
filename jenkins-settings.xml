@@ -1,9 +1,10 @@
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+  
   <profiles>
     <profile>
-      <id>jenkins-repo</id>
+      <id>jenkins-repositories</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -11,14 +12,22 @@
         <repository>
           <id>repo.jenkins-ci.org</id>
           <url>https://repo.jenkins-ci.org/public/</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
         </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
           <id>repo.jenkins-ci.org</id>
           <url>https://repo.jenkins-ci.org/public/</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
         </pluginRepository>
       </pluginRepositories>
     </profile>
   </profiles>
+
+  <activeProfiles>
+    <activeProfile>jenkins-repositories</activeProfile>
+  </activeProfiles>
 </settings>
