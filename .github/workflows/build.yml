@@ -22,12 +22,17 @@ jobs:
           distribution: 'zulu'
           cache: 'maven'
 
+      - name: Clean Corrupted Cache
+        run: rm -rf ~/.m2/repository/io/jenkins/tools/incrementals
+
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_VCATEST }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
-          mvn -B -U -s jenkins-settings.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          mvn -B -U 
+          -gs jenkins-settings.xml 
+          verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
           -DskipTests
           -Dspotbugs.skip=true
           -Dmaven.wagon.http.retryHandler.count=5
