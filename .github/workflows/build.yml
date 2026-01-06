@@ -22,23 +22,15 @@ jobs:
           distribution: 'zulu'
           cache: 'maven'
 
-      # Download the official Jenkins settings file safely
-      - name: Download Jenkins Settings
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/jenkins-infra/jenkins-maven-settings/main/settings.xml -o jenkins-settings.xml
-          # Verify the file starts with <settings (to ensure it's not an error page)
-          head -n 5 jenkins-settings.xml
-
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_VCATEST }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
-          mvn -B -s jenkins-settings.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          mvn -B -U -s jenkins-settings.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
           -DskipTests
           -Dspotbugs.skip=true
           -Dmaven.wagon.http.retryHandler.count=5
-          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
           -Dsonar.projectKey=vcatest_jenkins
           -Dsonar.organization=vcatest
           -Dsonar.host.url=https://sonarcloud.io
