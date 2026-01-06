@@ -20,16 +20,13 @@ jobs:
         with:
           java-version: '21'
           distribution: 'zulu'
-          # Cache is disabled to prevent "failure cached" errors from returning
-          # cache: 'maven'
 
-      - name: Force Clear Maven Cache Locks
+      - name: Nuke Poisoned Metadata
         run: |
-          # Deletes the ".lastUpdated" files that block Maven from retrying downloads
+          # Remove all cached 'not found' markers and the incrementals extension folder
           if [ -d ~/.m2/repository ]; then
             find ~/.m2/repository -name "*.lastUpdated" -delete
           fi
-          # Clear the specific path for the Jenkins bootstrap extension
           rm -rf ~/.m2/repository/io/jenkins/tools/incrementals
 
       - name: Build and analyze
@@ -38,11 +35,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           mvn -B -U 
-          -s jenkins-settings.xml 
+          -gs jenkins-settings.xml 
           verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
           -DskipTests
           -Dspotbugs.skip=true
-          -Dmaven.wagon.http.retryHandler.count=5
           -Dsonar.projectKey=vcatest_jenkins
           -Dsonar.organization=vcatest
           -Dsonar.host.url=https://sonarcloud.io
