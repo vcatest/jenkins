@@ -20,15 +20,17 @@ jobs:
         with:
           java-version: '21'
           distribution: 'zulu'
-          # We temporary disable the cache to ensure a fresh, clean environment
-          # once it works, we can re-enable it.
+          # Cache is disabled to prevent "failure cached" errors from returning
           # cache: 'maven'
 
-      - name: Nuke Broken Cache
+      - name: Force Clear Maven Cache Locks
         run: |
-          rm -rf ~/.m2/repository/io/jenkins
-          rm -rf ~/.m2/repository/org/jenkins-ci
-          rm -rf ~/.m2/repository/org/apache/maven/resolver
+          # Deletes the ".lastUpdated" files that block Maven from retrying downloads
+          if [ -d ~/.m2/repository ]; then
+            find ~/.m2/repository -name "*.lastUpdated" -delete
+          fi
+          # Clear the specific path for the Jenkins bootstrap extension
+          rm -rf ~/.m2/repository/io/jenkins/tools/incrementals
 
       - name: Build and analyze
         env:
@@ -36,12 +38,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           mvn -B -U 
-          -gs jenkins-settings.xml 
+          -s jenkins-settings.xml 
           verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
           -DskipTests
           -Dspotbugs.skip=true
-          -Dmaven.wagon.http.retryHandler.count=10
-          -Dmaven.wagon.http.retryHandler.class=default
+          -Dmaven.wagon.http.retryHandler.count=5
           -Dsonar.projectKey=vcatest_jenkins
           -Dsonar.organization=vcatest
           -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.c.file.suffixes=-
+          -Dsonar.cpp.file.suffixes=-
+          -Dsonar.objc.file.suffixes=-
